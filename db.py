@@ -28,9 +28,9 @@ def check_data():
 
     conn.close()
 
+
+
     # funkcija s kojom uzimam sve iteme
-
-
 def get_all_items():
     conn = sqlite3.connect("inventory.db")
     cr = conn.cursor()
@@ -38,9 +38,10 @@ def get_all_items():
     items = cr.fetchall()
     conn.close()
     return items
+
+
+
     # funkcija za dodavanje elemenata u magacin odnosno listu vodjenja magacina
-
-
 def add_items(name, quantity, price):
     conn = sqlite3.connect("inventory.db")
     cr = conn.cursor()
@@ -69,6 +70,7 @@ def get_item_by_id(item_id):
     item = cr.fetchone()
     conn.close()
     return item
+
 
 
     # funkcija za update itema
