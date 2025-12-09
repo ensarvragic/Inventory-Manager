@@ -9,6 +9,17 @@
 <body class="p-4">
    <h2>Inventory</h2>
     <a href="/add" class="btn btn-success mb-3">Add New Items</a>
+
+    <form action="/" method="GET" class="mb-3">
+        <input type="text" name="search" placeholder="Search by Name" value="{{ search }}" class="form-control">
+    </form>
+
+    <div class="mb-3">
+        <a href="/?sort=name" class="btn btn-outline-primary btn-sm">Sort by Name</a>
+        <a href="/?sort=quantity" class="btn btn-outline-primary btn-sm">Sort by Quantity</a>
+        <a href="/?sort=price" class="btn btn-outline-primary btn-sm">Sort by Price</a>
+    </div>
+
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
             <tr>

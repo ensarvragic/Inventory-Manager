@@ -6,21 +6,51 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
+    search = request.args.get("search", "")
+    sort_by = request.args.get("sort", "")
+
     items = db.get_all_items()
-    return render_template("inventory.html", items=items)
+
+    if search:
+        items = [item for item in items if search.lower() in item[1].lower()]
+
+    if sort_by == "name":
+        items.sort(key=lambda x: x[1].lower())
+    elif sort_by == 'quantity':
+        items.sort(key=lambda x: x[2])
+    elif sort_by == 'price':
+        items.sort(key=lambda x: x[3])
+
+    return render_template("inventory.html", items=items, search = search, sort_by = sort_by)
 
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
+    error = ""
+
     if request.method == "POST":
         name = request.form["name"]
-        quantity = int(request.form["quantity"])
-        price = float(request.form["price"])
+        quantity = request.form["quantity"]
+        price = request.form["price"]
 
-        db.add_items(name, quantity, price)
+        if not name or not quantity or not price:
+            error = "All fields are required"
+        else:
+            try:
+                quantity = int(quantity)
+                price = float(price)
 
-        return redirect(url_for("home"))
-    return render_template("add.html")
+                if quantity < 0 or price < 0:
+                    error = "Values must be positive"
+                else:
+                    db.add_items(name, quantity, price)
+                    return redirect(url_for("home"))
+
+            except ValueError:
+                error = "Quantity and price must be numbers"
+
+    return render_template("add.html", error=error)
+
 
 
 @app.route("/delete/<int:item_id>")
@@ -39,7 +69,7 @@ def edit(item_id):
         price = float(request.form["price"])
         db.update_item(item_id, name, quantity, price)
         return redirect(url_for("home"))
-    return render_template("edit.html", item = item)
+    return render_template("edit.html", item=item)
 
 
 if __name__ == "__main__":
